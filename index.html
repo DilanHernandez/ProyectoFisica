@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simulador de Tiro Parabólico ACME</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     MODAL DE PRESENTACIÓN (primer thing que ve el usuario)
+═══════════════════════════════════════════════════════ -->
+<div id="modal-welcome" class="modal-backdrop">
+  <div class="modal-box">
+
+    <!-- Logo ACME + título -->
+    <div class="modal-acme">ACME</div>
+    <div class="modal-subtitle-top">Corp. de Física Aplicada</div>
+
+    <h1 class="modal-title">
+      Simulador de<br>
+      <span>Tiro Parabólico</span>
+    </h1>
+
+    <p class="modal-desc">
+      Proyecto educativo interactivo para comprender el movimiento
+      parabólico y semiparabólico mediante simulaciones cartoon.
+    </p>
+
+    <!-- Canvas decorativo mini -->
+    <canvas id="canvas-modal" class="modal-canvas" width="520" height="120"></canvas>
+
+    <!-- Datos del estudiante -->
+    <div class="modal-student-card">
+      <div class="msc-header">📋 Datos del Estudiante</div>
+      <div class="msc-grid">
+        <span class="msc-lbl">Nombre</span>
+        <span class="msc-val">Dilan Gerardo Hernandez Aguilar</span>
+        <span class="msc-lbl">Carnet</span>
+        <span class="msc-val">5990 25 5137</span>
+        <span class="msc-lbl">Curso</span>
+        <span class="msc-val">Física 1</span>
+        <span class="msc-lbl">Sección</span>
+        <span class="msc-val">A</span>
+      </div>
+    </div>
+
+    <!-- Botón entrar -->
+    <button id="btn-enter" class="btn-enter">
+      <span class="btn-enter-ico">🚀</span>
+      Entrar al Simulador
+    </button>
+
+    <p class="modal-foot">HTML5 · CSS3 · JavaScript Vanilla · Canvas API</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PANTALLA DE INICIO (teoría)
+═══════════════════════════════════════════════════════ -->
+<div id="screen-intro" class="screen">
+
+  <header class="intro-header">
+    <div class="acme-logo-big">ACME</div>
+    <h1 class="intro-title">Simulador de <span>Tiro Parabólico</span></h1>
+    <p class="intro-sub">Aprende física mediante simulaciones cartoon 🚀</p>
+  </header>
+
+  <div class="intro-scene-wrap">
+    <canvas id="canvas-intro" width="900" height="220"></canvas>
+  </div>
+
+  <section class="edu-section">
+    <h2 class="sec-label">📐 Conceptos Físicos</h2>
+    <div class="cards-row">
+      <div class="edu-card">
+        <span class="card-ico">🎯</span>
+        <h3>Tiro Parabólico</h3>
+        <p>Objeto lanzado con ángulo θ respecto al suelo. Combina movimiento horizontal uniforme con caída libre bajo la gravedad.</p>
+      </div>
+      <div class="edu-card">
+        <span class="card-ico">📉</span>
+        <h3>Tiro Semiparabólico</h3>
+        <p>Parte desde una altura con velocidad horizontal (θ=0°). Caída libre vertical mientras avanza a velocidad constante.</p>
+      </div>
+      <div class="edu-card">
+        <span class="card-ico">🌍</span>
+        <h3>Aplicaciones Reales</h3>
+        <p>Balística, deportes, cohetes, fuegos artificiales, chorros de agua, proyectiles en ingeniería y videojuegos.</p>
+      </div>
+      <div class="edu-card">
+        <span class="card-ico">⚡</span>
+        <h3>Variables Físicas</h3>
+        <ul>
+          <li><strong>v₀</strong> — Velocidad inicial (m/s)</li>
+          <li><strong>θ</strong> — Ángulo de lanzamiento (°)</li>
+          <li><strong>g</strong> — Gravedad (9.8 m/s²)</li>
+          <li><strong>h₀</strong> — Altura inicial (m)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 class="sec-label">📊 Ecuaciones del Movimiento</h2>
+    <div class="formulas-row">
+      <div class="fcard"><div class="flabel">Posición Horizontal</div><div class="feq">x = v₀·cos(θ)·t</div></div>
+      <div class="fcard"><div class="flabel">Posición Vertical</div><div class="feq">y = h₀ + v₀·sin(θ)·t − ½g·t²</div></div>
+      <div class="fcard"><div class="flabel">Velocidad Horizontal</div><div class="feq">vₓ = v₀·cos(θ)</div></div>
+      <div class="fcard"><div class="flabel">Velocidad Vertical</div><div class="feq">vᵧ = v₀·sin(θ) − g·t</div></div>
+      <div class="fcard"><div class="flabel">Tiempo de Vuelo</div><div class="feq">T = [v₀sin(θ)+√(v₀²sin²θ+2gh₀)] / g</div></div>
+      <div class="fcard"><div class="flabel">Alcance Máximo</div><div class="feq">R = vₓ · T</div></div>
+    </div>
+  </section>
+
+  <div class="start-sticky">
+    <button id="btn-start" class="btn-start">
+      <span class="btn-rocket">🚀</span> ¡Iniciar Simulación!
+    </button>
+    <p class="start-hint">El coyote necesita tu ayuda para atrapar al corredor...</p>
+  </div>
+
+  <footer class="intro-footer">🔬 Proyecto educativo · Física aplicada · HTML5 Canvas · Sin librerías externas</footer>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PANTALLA SIMULACIÓN
+═══════════════════════════════════════════════════════ -->
+<div id="screen-sim" class="screen">
+
+  <!-- Topbar -->
+  <div class="sim-topbar">
+    <div class="topbar-left">
+      <span class="acme-tag">ACME</span>
+      <span class="topbar-title">Simulador de Tiro Parabólico</span>
+    </div>
+    <div class="topbar-right">
+      <button id="btn-dark-mode" class="tbtn" title="Modo nocturno">🌙</button>
+      <button id="btn-theory"    class="tbtn" title="Ver teoría">📚</button>
+      <button id="btn-home"      class="tbtn" title="Reiniciar">🏠</button>
+    </div>
+  </div>
+
+  <!-- Cuerpo: PANEL IZQUIERDA | CANVAS DERECHA -->
+  <div class="sim-body">
+
+    <!-- ── PANEL DE CONTROL (izquierda) ── -->
+    <aside class="ctrl-panel">
+
+      <!-- Stats en tiempo real -->
+      <div class="stats-bar">
+        <div class="sbox"><span class="slbl">Distancia</span> <span class="sval" id="stat-dist">0.0 m</span></div>
+        <div class="sbox"><span class="slbl">Altura máx</span><span class="sval" id="stat-alt">0.0 m</span></div>
+        <div class="sbox"><span class="slbl">Tiempo</span>    <span class="sval" id="stat-time">0.0 s</span></div>
+        <div class="sbox"><span class="slbl">Intentos</span>  <span class="sval" id="stat-tries">0</span></div>
+      </div>
+
+      <!-- Área de controles (scroll interno) -->
+      <div class="ctrl-scroll">
+
+        <!-- Tipo de tiro -->
+        <div class="cgroup">
+          <div class="clabel">Tipo de Lanzamiento</div>
+          <div class="type-row">
+            <button id="btn-parabolico" class="type-btn active" data-type="parabolico">🎯 Parabólico</button>
+            <button id="btn-semi"       class="type-btn"        data-type="semi">📉 Semiparabólico</button>
+          </div>
+        </div>
+
+        <!-- Velocidad -->
+        <div class="cgroup">
+          <div class="clabel">
+            Velocidad inicial
+            <span class="tip-icon" data-tip="Velocidad con que sale el cohete (m/s)">?</span>
+          </div>
+          <div class="irow">
+            <input type="range"  id="slider-vel" min="10" max="150" value="60" class="cslider"/>
+            <input type="number" id="input-vel"  min="10" max="150" value="60" class="cnumber"/>
+            <span class="cunit">m/s</span>
+          </div>
+        </div>
+
+        <!-- Ángulo -->
+        <div class="cgroup" id="group-angle">
+          <div class="clabel">
+            Ángulo de lanzamiento
+            <span class="tip-icon" data-tip="Ángulo respecto al suelo, 0°–90°">?</span>
+          </div>
+          <div class="irow">
+            <input type="range"  id="slider-angle" min="0" max="90" value="45" class="cslider"/>
+            <input type="number" id="input-angle"  min="0" max="90" value="45" class="cnumber"/>
+            <span class="cunit">°</span>
+          </div>
+          <div class="angle-row">
+            <canvas id="canvas-angle" width="64" height="64" class="angle-canvas"></canvas>
+            <div class="angle-hint">Dirección de lanzamiento</div>
+          </div>
+        </div>
+
+        <!-- Altura inicial -->
+        <div class="cgroup">
+          <div class="clabel">
+            Altura inicial
+            <span class="tip-icon" data-tip="Altura desde donde parte el cohete (m)">?</span>
+          </div>
+          <div class="irow">
+            <input type="range"  id="slider-height" min="0" max="100" value="0" class="cslider"/>
+            <input type="number" id="input-height"  min="0" max="100" value="0" class="cnumber"/>
+            <span class="cunit">m</span>
+          </div>
+        </div>
+
+        <!-- Gravedad -->
+        <div class="cgroup">
+          <div class="clabel">
+            Gravedad
+            <span class="tip-icon" data-tip="Tierra=9.8, Luna=1.62, Marte=3.72 (m/s²)">?</span>
+          </div>
+          <div class="irow">
+            <input type="range"  id="slider-gravity" min="1" max="25" value="9.8" step="0.1" class="cslider"/>
+            <input type="number" id="input-gravity"  min="1" max="25" value="9.8" step="0.1" class="cnumber"/>
+            <span class="cunit">m/s²</span>
+          </div>
+        </div>
+
+      </div><!-- /ctrl-scroll -->
+
+      <!-- ── ZONA FIJA: gráfica + predicción + botones ── -->
+      <div class="fixed-bottom">
+
+        <!-- Gráfica siempre visible -->
+        <div class="graph-block">
+          <div class="graph-header">
+            <span class="graph-lbl">📈 Trayectoria</span>
+            <div class="pred-inline">
+              <span class="pi-item"><span class="pi-lbl">T:</span><span id="pred-time"  class="pi-val">—</span></span>
+              <span class="pi-item"><span class="pi-lbl">X:</span><span id="pred-range" class="pi-val">—</span></span>
+              <span class="pi-item"><span class="pi-lbl">Hmax:</span><span id="pred-hmax" class="pi-val">—</span></span>
+            </div>
+          </div>
+          <canvas id="canvas-graph" width="278" height="82" class="graph-canvas"></canvas>
+        </div>
+
+        <!-- Botones de acción — SIEMPRE VISIBLES -->
+        <div class="action-bar">
+        <button id="btn-launch" class="btn-fire">
+          <span id="launch-icon">🚀</span>
+          <span id="launch-text">¡Lanzar Cohete!</span>
+        </button>
+        <button id="btn-reset-sim" class="btn-restart">
+          🔄 Reiniciar Simulador
+        </button>
+        </div>
+      </div><!-- /fixed-bottom -->
+
+    </aside>
+
+    <!-- ── CANVAS GRANDE (derecha, protagonista) ── -->
+    <div class="canvas-col">
+      <canvas id="canvas-main"></canvas>
+
+      <!-- Overlay resultado -->
+      <div id="msg-overlay" class="msg-overlay hidden">
+        <div class="msg-box">
+          <div id="msg-icon"    class="msg-icon">💥</div>
+          <div id="msg-text"    class="msg-text"></div>
+          <div id="msg-stats"   class="msg-stats"></div>
+          <div id="msg-buttons" class="msg-btns"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /sim-body -->
+</div><!-- /screen-sim -->
+
+<!-- Tooltip global -->
+<div id="tooltip" class="tooltip hidden"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
