@@ -557,13 +557,33 @@ html, body {
 .cnumber:focus { border-color: var(--blue); }
 .cunit { font-size: .68rem; color: var(--text2); min-width: 28px; white-space: nowrap; }
 
-/* Indicador de ángulo */
-.angle-row { display: flex; align-items: center; gap: 8px; margin-top: 3px; }
-.angle-canvas { flex-shrink: 0; border-radius: 50%; background: var(--dark2); }
-.angle-hint { font-size: .68rem; color: var(--text2); line-height: 1.35; }
 
-/* ── ZONA FIJA INFERIOR: gráfica + botones ──────────────
-   Siempre visible, nunca se esconde con el scroll          */
+/* Predicción compacta dentro del scroll */
+.pred-compact {
+  background: rgba(26,120,216,.1);
+  border: 1px solid rgba(26,120,216,.28);
+  border-radius: var(--r-md);
+  padding: 8px 10px;
+}
+.pred-compact-title {
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: #6ab0ee;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+.pred-compact-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 8px;
+  font-size: .79rem;
+}
+.pcl { color: var(--text2); }
+.pcv { color: var(--text); font-family: var(--font-m); font-weight: bold; }
+
+/* ── ZONA FIJA INFERIOR: botones ────────────────────────
+   Siempre visible, nunca se esconde con el scroll        */
 .fixed-bottom {
   flex-shrink: 0;
   display: flex;
@@ -572,49 +592,6 @@ html, body {
   border-top: 2px solid rgba(255,255,255,.06);
 }
 
-/* Bloque de la gráfica */
-.graph-block {
-  padding: 7px 10px 5px;
-  border-bottom: 1px solid rgba(255,255,255,.06);
-}
-
-.graph-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 5px;
-}
-
-.graph-lbl {
-  font-size: .66rem;
-  text-transform: uppercase;
-  letter-spacing: .7px;
-  color: #6ab0ee;
-  font-weight: bold;
-}
-
-/* Predicciones inline junto al título de la gráfica */
-.pred-inline {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-.pi-item {
-  display: flex;
-  gap: 2px;
-  align-items: baseline;
-  font-size: .68rem;
-}
-.pi-lbl { color: var(--text2); }
-.pi-val { color: var(--yellow); font-family: var(--font-m); font-weight: bold; }
-
-/* Canvas de la mini gráfica */
-.graph-canvas {
-  width: 100%; height: 82px; display: block;
-  border-radius: var(--r-sm);
-  border: 1px solid var(--border);
-  background: var(--dark);
-}
 
 /* Barra de acción */
 .action-bar {
@@ -735,56 +712,115 @@ body.dark-mode .btn-fire   { background: linear-gradient(135deg,#2266cc,#1a4fa8)
    RESPONSIVE
 ═══════════════════════════════════════════════════════════ */
 
-/* Tablet ancha */
+/* Tablet horizontal */
 @media (max-width: 960px) {
-  :root { --panel-w: 268px; }
+  :root { --panel-w: 260px; }
 }
 
-/* Tablet / móvil — canvas arriba, panel abajo */
+/* Tablet vertical / móvil grande (≤ 680px)
+   Layout: canvas arriba | panel debajo, scroll natural */
 @media (max-width: 680px) {
-  html, body { overflow: auto; }
-  .screen { height: auto; overflow-y: auto; }
-  #screen-sim { height: auto; overflow-y: auto; }
-  #screen-sim.active { display: flex; }
 
-  .sim-body {
-    flex-direction: column;   /* canvas arriba, panel abajo en móvil */
+  /* Habilitar scroll natural en body */
+  html, body {
+    overflow: auto;
     height: auto;
   }
 
-  /* Canvas arriba, altura proporcional */
+  /* Screens en bloque, scroll natural */
+  .screen { height: auto; overflow-y: visible; }
+
+  /* Simulador: columna única, scroll natural */
+  #screen-sim {
+    height: auto;
+    min-height: 100svh;
+    overflow-y: visible;
+  }
+  #screen-sim.active { display: flex; }
+
+  /* Columna única: canvas arriba, panel abajo */
+  .sim-body {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+
+  /* Canvas: altura fija visible sin scroll */
   .canvas-col {
     flex: none;
     width: 100%;
-    height: 56vw;
-    min-height: 220px;
-    max-height: 400px;
+    height: 58vw;
+    min-height: 200px;
+    max-height: 380px;
   }
 
-  /* Panel ocupa el ancho completo debajo */
+  /* Panel: ancho completo, altura automática */
   .ctrl-panel {
     width: 100%;
     height: auto;
+    flex-shrink: 0;
     border-right: none;
     border-top: 2.5px solid var(--yellow);
-    flex-shrink: 0;
   }
-  .ctrl-scroll { max-height: 40vh; }
+
+  /* Scroll interno del panel — sin altura máxima forzada */
+  .ctrl-scroll {
+    overflow-y: visible;
+    max-height: none;
+    height: auto;
+  }
+
+  /* Zona fija inferior: en móvil no necesita ser sticky,
+     simplemente fluye al final del panel */
+  .fixed-bottom {
+    position: static;
+  }
+
+  /* Stats en 4 columnas iguales */
   .stats-bar { grid-template-columns: repeat(4, 1fr); }
+
+  /* Intro: cards en 2 columnas */
   .cards-row { grid-template-columns: 1fr 1fr; }
   .formulas-row { grid-template-columns: 1fr; }
 
-  /* Modal responsivo */
+  /* Modal */
   .modal-box { padding: 1.6rem 1.4rem 1.4rem; }
-  .modal-title { font-size: 1.6rem; }
+  .modal-title { font-size: 1.5rem; }
+  .modal-canvas { height: 80px; }
 }
 
+/* Móvil pequeño (≤ 420px) */
 @media (max-width: 420px) {
-  .intro-title { font-size: 1.6rem; }
-  .btn-start, .btn-enter { font-size: 1.1rem; padding: .85rem 1.8rem; }
+  .intro-title { font-size: 1.5rem; }
+  .btn-start, .btn-enter { font-size: 1rem; padding: .8rem 1.6rem; }
   .topbar-title { display: none; }
-  .cards-row { grid-template-columns: 1fr; }
+
+  .canvas-col {
+    height: 56vw;
+    min-height: 180px;
+  }
+
+  /* Stats en 2×2 para pantallas muy angostas */
   .stats-bar { grid-template-columns: 1fr 1fr; }
-  .modal-box { padding: 1.4rem 1rem 1.2rem; }
-  .msc-grid { font-size: .78rem; }
+  .cards-row { grid-template-columns: 1fr; }
+
+  /* Inputs más fáciles de tocar */
+  .cslider::-webkit-slider-thumb { width: 26px; height: 26px; }
+  .cslider::-moz-range-thumb     { width: 26px; height: 26px; }
+  .cnumber { width: 54px; font-size: .8rem; padding: .35rem .3rem; }
+
+  /* Modal */
+  .modal-box { padding: 1.3rem .9rem 1.1rem; }
+  .modal-acme { font-size: 1.6rem; }
+  .msc-grid { font-size: .76rem; }
+  .btn-enter { padding: .8rem 1.4rem; font-size: 1rem; }
+}
+
+/* Móvil muy pequeño (≤ 360px) */
+@media (max-width: 360px) {
+  .canvas-col { height: 52vw; min-height: 160px; }
+  .stats-bar  { grid-template-columns: 1fr 1fr; }
+  .topbar-title { display: none; }
+  .acme-tag   { letter-spacing: 2px; font-size: .72rem; }
+  .btn-fire   { font-size: 1rem; padding: .75rem; }
 }
