@@ -192,10 +192,7 @@
             <input type="number" id="input-angle"  min="0" max="90" value="45" class="cnumber"/>
             <span class="cunit">°</span>
           </div>
-          <div class="angle-row">
-            <canvas id="canvas-angle" width="64" height="64" class="angle-canvas"></canvas>
-            <div class="angle-hint">Dirección de lanzamiento</div>
-          </div>
+
         </div>
 
         <!-- Altura inicial -->
@@ -224,23 +221,20 @@
           </div>
         </div>
 
+        <!-- Predicción teórica compacta -->
+        <div class="pred-compact">
+          <div class="pred-compact-title">📐 Predicción</div>
+          <div class="pred-compact-grid">
+            <span class="pcl">Tiempo vuelo:</span><span id="pred-time"  class="pcv">—</span>
+            <span class="pcl">Alcance:</span>      <span id="pred-range" class="pcv">—</span>
+            <span class="pcl">Altura máx:</span>   <span id="pred-hmax"  class="pcv">—</span>
+          </div>
+        </div>
+
       </div><!-- /ctrl-scroll -->
 
-      <!-- ── ZONA FIJA: gráfica + predicción + botones ── -->
+      <!-- ── ZONA FIJA: botones ── -->
       <div class="fixed-bottom">
-
-        <!-- Gráfica siempre visible -->
-        <div class="graph-block">
-          <div class="graph-header">
-            <span class="graph-lbl">📈 Trayectoria</span>
-            <div class="pred-inline">
-              <span class="pi-item"><span class="pi-lbl">T:</span><span id="pred-time"  class="pi-val">—</span></span>
-              <span class="pi-item"><span class="pi-lbl">X:</span><span id="pred-range" class="pi-val">—</span></span>
-              <span class="pi-item"><span class="pi-lbl">Hmax:</span><span id="pred-hmax" class="pi-val">—</span></span>
-            </div>
-          </div>
-          <canvas id="canvas-graph" width="278" height="82" class="graph-canvas"></canvas>
-        </div>
 
         <!-- Botones de acción — SIEMPRE VISIBLES -->
         <div class="action-bar">

@@ -90,8 +90,7 @@ const DOM = {
 
   canvasMain:  $('canvas-main'),
   canvasIntro: $('canvas-intro'),
-  canvasAngle: $('canvas-angle'),
-  canvasGraph: $('canvas-graph'),
+  canvasModal: $('canvas-modal'),
   tooltip:     $('tooltip'),
 };
 
@@ -1939,49 +1938,13 @@ function updatePredictions() {
   DOM.predTime.textContent  = `${pred.time} s`;
   DOM.predRange.textContent = `${pred.range} m`;
   DOM.predHmax.textContent  = `${pred.hmax} m`;
-  drawMiniGraph();
+  // Mini gráfica eliminada del panel de inputs
 }
 
 function updateAngleIndicator() {
-  const canvas = DOM.canvasAngle;
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  ctx.clearRect(0, 0, W, H);
-
-  const type     = STATE.projectileType;
-  const angleDeg = (type==='semi') ? 0 : parseFloat(DOM.inputAngle.value);
-  const angle    = angleDeg * Math.PI / 180;
-
-  // Fondo circular
-  ctx.fillStyle = '#0a0a18';
-  ctx.beginPath(); ctx.arc(W/2, H/2, W/2-1, 0, Math.PI*2); ctx.fill();
-
-  // Arc de ángulo
-  ctx.strokeStyle = 'rgba(26,120,216,.5)';
-  ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.arc(W-9, H-9, 22, -Math.PI/2, -(angle+Math.PI/2), true); ctx.stroke();
-
-  // Línea base
-  ctx.strokeStyle = '#555';
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(8, H-9); ctx.lineTo(W-9, H-9); ctx.stroke();
-
-  // Flecha
-  const len = 34, ox = W-9, oy = H-9;
-  ctx.strokeStyle = '#e8341c';
-  ctx.lineWidth = 2.5;
-  ctx.lineCap   = 'round';
-  ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox-len*Math.cos(angle), oy-len*Math.sin(angle)); ctx.stroke();
-  ctx.fillStyle = '#e8341c';
-  ctx.beginPath(); ctx.arc(ox-len*Math.cos(angle), oy-len*Math.sin(angle), 3.5, 0, Math.PI*2); ctx.fill();
-
-  // Texto
-  ctx.fillStyle = '#eee';
-  ctx.font = 'bold 11px Verdana';
-  ctx.textAlign = 'center';
-  ctx.fillText(`${angleDeg}°`, W/2, H/2+5);
+  // Canvas de ángulo eliminado del panel — función conservada para compatibilidad
 }
+
 
 // ──────────────────────────────────────────────────
 // TOOLTIPS
