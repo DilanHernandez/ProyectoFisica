@@ -3,274 +3,389 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Simulador de Tiro Parabólico ACME</title>
+  <title>BillarFísica — Simulador de Colisiones · UMG Chinautla</title>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════
-     MODAL DE PRESENTACIÓN (primer thing que ve el usuario)
-═══════════════════════════════════════════════════════ -->
-<div id="modal-welcome" class="modal-backdrop">
-  <div class="modal-box">
-
-    <!-- Logo ACME + título -->
-    <div class="modal-acme">ACME</div>
-    <div class="modal-subtitle-top">Corp. de Física Aplicada</div>
-
-    <h1 class="modal-title">
-      Simulador de<br>
-      <span>Tiro Parabólico</span>
-    </h1>
-
-    <p class="modal-desc">
-      Proyecto educativo interactivo para comprender el movimiento
-      parabólico y semiparabólico mediante simulaciones cartoon.
-    </p>
-
-    <!-- Canvas decorativo mini -->
-    <canvas id="canvas-modal" class="modal-canvas" width="520" height="120"></canvas>
-
-    <!-- Datos del estudiante -->
-    <div class="modal-student-card">
-      <div class="msc-header">📋 Datos del Estudiante</div>
-      <div class="msc-grid">
-        <span class="msc-lbl">Nombre</span>
-        <span class="msc-val">Dilan Gerardo Hernandez Aguilar</span>
-        <span class="msc-lbl">Carnet</span>
-        <span class="msc-val">5990 25 5137</span>
-        <span class="msc-lbl">Curso</span>
-        <span class="msc-val">Física 1</span>
-        <span class="msc-lbl">Sección</span>
-        <span class="msc-val">A</span>
-      </div>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <div class="nav-logo">🎱</div>
+      <span>BillarFísica</span>
     </div>
-
-    <!-- Botón entrar -->
-    <button id="btn-enter" class="btn-enter">
-      <span class="btn-enter-ico">🚀</span>
-      Entrar al Simulador
-    </button>
-
-    <p class="modal-foot">HTML5 · CSS3 · JavaScript Vanilla · Canvas API</p>
-  </div>
-</div>
-
-
-<!-- ═══════════════════════════════════════════════════════
-     PANTALLA DE INICIO (teoría)
-═══════════════════════════════════════════════════════ -->
-<div id="screen-intro" class="screen">
-
-  <header class="intro-header">
-    <div class="acme-logo-big">ACME</div>
-    <h1 class="intro-title">Simulador de <span>Tiro Parabólico</span></h1>
-    <p class="intro-sub">Aprende física mediante simulaciones cartoon 🚀</p>
-  </header>
-
-  <div class="intro-scene-wrap">
-    <canvas id="canvas-intro" width="900" height="220"></canvas>
-  </div>
-
-  <section class="edu-section">
-    <h2 class="sec-label">📐 Conceptos Físicos</h2>
-    <div class="cards-row">
-      <div class="edu-card">
-        <span class="card-ico">🎯</span>
-        <h3>Tiro Parabólico</h3>
-        <p>Objeto lanzado con ángulo θ respecto al suelo. Combina movimiento horizontal uniforme con caída libre bajo la gravedad.</p>
-      </div>
-      <div class="edu-card">
-        <span class="card-ico">📉</span>
-        <h3>Tiro Semiparabólico</h3>
-        <p>Parte desde una altura con velocidad horizontal (θ=0°). Caída libre vertical mientras avanza a velocidad constante.</p>
-      </div>
-      <div class="edu-card">
-        <span class="card-ico">🌍</span>
-        <h3>Aplicaciones Reales</h3>
-        <p>Balística, deportes, cohetes, fuegos artificiales, chorros de agua, proyectiles en ingeniería y videojuegos.</p>
-      </div>
-      <div class="edu-card">
-        <span class="card-ico">⚡</span>
-        <h3>Variables Físicas</h3>
-        <ul>
-          <li><strong>v₀</strong> — Velocidad inicial (m/s)</li>
-          <li><strong>θ</strong> — Ángulo de lanzamiento (°)</li>
-          <li><strong>g</strong> — Gravedad (9.8 m/s²)</li>
-          <li><strong>h₀</strong> — Altura inicial (m)</li>
-        </ul>
-      </div>
+    <div class="nav-links">
+      <button class="nav-btn active" id="btn-home"      onclick="showPage('home')">Inicio</button>
+      <button class="nav-btn"        id="btn-simulator" onclick="showPage('simulator')">Simulador</button>
     </div>
+  </nav>
 
-    <h2 class="sec-label">📊 Ecuaciones del Movimiento</h2>
-    <div class="formulas-row">
-      <div class="fcard"><div class="flabel">Posición Horizontal</div><div class="feq">x = v₀·cos(θ)·t</div></div>
-      <div class="fcard"><div class="flabel">Posición Vertical</div><div class="feq">y = h₀ + v₀·sin(θ)·t − ½g·t²</div></div>
-      <div class="fcard"><div class="flabel">Velocidad Horizontal</div><div class="feq">vₓ = v₀·cos(θ)</div></div>
-      <div class="fcard"><div class="flabel">Velocidad Vertical</div><div class="feq">vᵧ = v₀·sin(θ) − g·t</div></div>
-      <div class="fcard"><div class="flabel">Tiempo de Vuelo</div><div class="feq">T = [v₀sin(θ)+√(v₀²sin²θ+2gh₀)] / g</div></div>
-      <div class="fcard"><div class="flabel">Alcance Máximo</div><div class="feq">R = vₓ · T</div></div>
-    </div>
-  </section>
+  <!-- ══════════════════════════════════════
+       PÁGINA: INICIO
+  ══════════════════════════════════════ -->
+  <div id="page-home" class="page active">
 
-  <div class="start-sticky">
-    <button id="btn-start" class="btn-start">
-      <span class="btn-rocket">🚀</span> ¡Iniciar Simulación!
-    </button>
-    <p class="start-hint">El coyote necesita tu ayuda para atrapar al corredor...</p>
-  </div>
-
-  <footer class="intro-footer">🔬 Proyecto educativo · Física aplicada · HTML5 Canvas · Sin librerías externas</footer>
-</div>
-
-
-<!-- ═══════════════════════════════════════════════════════
-     PANTALLA SIMULACIÓN
-═══════════════════════════════════════════════════════ -->
-<div id="screen-sim" class="screen">
-
-  <!-- Topbar -->
-  <div class="sim-topbar">
-    <div class="topbar-left">
-      <span class="acme-tag">ACME</span>
-      <span class="topbar-title">Simulador de Tiro Parabólico</span>
-    </div>
-    <div class="topbar-right">
-      <button id="btn-dark-mode" class="tbtn" title="Modo nocturno">🌙</button>
-      <button id="btn-theory"    class="tbtn" title="Ver teoría">📚</button>
-      <button id="btn-home"      class="tbtn" title="Reiniciar">🏠</button>
-    </div>
-  </div>
-
-  <!-- Cuerpo: PANEL IZQUIERDA | CANVAS DERECHA -->
-  <div class="sim-body">
-
-    <!-- ── PANEL DE CONTROL (izquierda) ── -->
-    <aside class="ctrl-panel">
-
-      <!-- Stats en tiempo real -->
-      <div class="stats-bar">
-        <div class="sbox"><span class="slbl">Distancia</span> <span class="sval" id="stat-dist">0.0 m</span></div>
-        <div class="sbox"><span class="slbl">Altura máx</span><span class="sval" id="stat-alt">0.0 m</span></div>
-        <div class="sbox"><span class="slbl">Tiempo</span>    <span class="sval" id="stat-time">0.0 s</span></div>
-        <div class="sbox"><span class="slbl">Intentos</span>  <span class="sval" id="stat-tries">0</span></div>
-      </div>
-
-      <!-- Área de controles (scroll interno) -->
-      <div class="ctrl-scroll">
-
-        <!-- Tipo de tiro -->
-        <div class="cgroup">
-          <div class="clabel">Tipo de Lanzamiento</div>
-          <div class="type-row">
-            <button id="btn-parabolico" class="type-btn active" data-type="parabolico">🎯 Parabólico</button>
-            <button id="btn-semi"       class="type-btn"        data-type="semi">📉 Semiparabólico</button>
+    <section class="student-section">
+      <div class="container">
+        <div class="student-banner">
+          <div class="student-avatar">DH</div>
+          <div class="student-details">
+            <div class="student-name">Dilan Gerardo Hernandez Aguilar</div>
+            <div class="student-meta">
+              <span class="meta-chip">🎓 Carnet: 5990 25 5137</span>
+              <span class="meta-chip">📍 UMG Chinautla</span>
+              <span class="meta-chip">📚 Física 1 — Sección A</span>
+            </div>
           </div>
-        </div>
-
-        <!-- Velocidad -->
-        <div class="cgroup">
-          <div class="clabel">
-            Velocidad inicial
-            <span class="tip-icon" data-tip="Velocidad con que sale el cohete (m/s)">?</span>
-          </div>
-          <div class="irow">
-            <input type="range"  id="slider-vel" min="10" max="150" value="60" class="cslider"/>
-            <input type="number" id="input-vel"  min="10" max="150" value="60" class="cnumber"/>
-            <span class="cunit">m/s</span>
-          </div>
-        </div>
-
-        <!-- Ángulo -->
-        <div class="cgroup" id="group-angle">
-          <div class="clabel">
-            Ángulo de lanzamiento
-            <span class="tip-icon" data-tip="Ángulo respecto al suelo, 0°–90°">?</span>
-          </div>
-          <div class="irow">
-            <input type="range"  id="slider-angle" min="0" max="90" value="45" class="cslider"/>
-            <input type="number" id="input-angle"  min="0" max="90" value="45" class="cnumber"/>
-            <span class="cunit">°</span>
-          </div>
-
-        </div>
-
-        <!-- Altura inicial -->
-        <div class="cgroup">
-          <div class="clabel">
-            Altura inicial
-            <span class="tip-icon" data-tip="Altura desde donde parte el cohete (m)">?</span>
-          </div>
-          <div class="irow">
-            <input type="range"  id="slider-height" min="0" max="100" value="0" class="cslider"/>
-            <input type="number" id="input-height"  min="0" max="100" value="0" class="cnumber"/>
-            <span class="cunit">m</span>
-          </div>
-        </div>
-
-        <!-- Gravedad -->
-        <div class="cgroup">
-          <div class="clabel">
-            Gravedad
-            <span class="tip-icon" data-tip="Tierra=9.8, Luna=1.62, Marte=3.72 (m/s²)">?</span>
-          </div>
-          <div class="irow">
-            <input type="range"  id="slider-gravity" min="1" max="25" value="9.8" step="0.1" class="cslider"/>
-            <input type="number" id="input-gravity"  min="1" max="25" value="9.8" step="0.1" class="cnumber"/>
-            <span class="cunit">m/s²</span>
-          </div>
-        </div>
-
-        <!-- Predicción teórica compacta -->
-        <div class="pred-compact">
-          <div class="pred-compact-title">📐 Predicción</div>
-          <div class="pred-compact-grid">
-            <span class="pcl">Tiempo vuelo:</span><span id="pred-time"  class="pcv">—</span>
-            <span class="pcl">Alcance:</span>      <span id="pred-range" class="pcv">—</span>
-            <span class="pcl">Altura máx:</span>   <span id="pred-hmax"  class="pcv">—</span>
-          </div>
-        </div>
-
-      </div><!-- /ctrl-scroll -->
-
-      <!-- ── ZONA FIJA: botones ── -->
-      <div class="fixed-bottom">
-
-        <!-- Botones de acción — SIEMPRE VISIBLES -->
-        <div class="action-bar">
-        <button id="btn-launch" class="btn-fire">
-          <span id="launch-icon">🚀</span>
-          <span id="launch-text">¡Lanzar Cohete!</span>
-        </button>
-        <button id="btn-reset-sim" class="btn-restart">
-          🔄 Reiniciar Simulador
-        </button>
-        </div>
-      </div><!-- /fixed-bottom -->
-
-    </aside>
-
-    <!-- ── CANVAS GRANDE (derecha, protagonista) ── -->
-    <div class="canvas-col">
-      <canvas id="canvas-main"></canvas>
-
-      <!-- Overlay resultado -->
-      <div id="msg-overlay" class="msg-overlay hidden">
-        <div class="msg-box">
-          <div id="msg-icon"    class="msg-icon">💥</div>
-          <div id="msg-text"    class="msg-text"></div>
-          <div id="msg-stats"   class="msg-stats"></div>
-          <div id="msg-buttons" class="msg-btns"></div>
+          <div class="student-year">2026</div>
         </div>
       </div>
-    </div>
+    </section>
 
-  </div><!-- /sim-body -->
-</div><!-- /screen-sim -->
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-text">
+          <div class="hero-eyebrow">Laboratorio Virtual de Física</div>
+          <h1 class="hero-title">Colisiones<br/><em>en Física</em></h1>
+          <p class="hero-desc">
+            Simulador estilo billar de colisiones elásticas e inelásticas en 2D.
+            Controla la bola blanca, apunta al objetivo circular y observa la
+            conservación de momentum y energía cinética en acción.
+          </p>
+          <button class="cta-btn" onclick="showPage('simulator')">
+            Jugar Simulador
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+        <div class="hero-canvas-wrap">
+          <canvas id="hero-canvas" width="380" height="280"></canvas>
+          <p class="canvas-caption">Vista previa interactiva</p>
+        </div>
+      </div>
+    </section>
 
-<!-- Tooltip global -->
-<div id="tooltip" class="tooltip hidden"></div>
+    <section class="section">
+      <div class="container">
+        <div class="section-eyebrow">Guía de uso</div>
+        <h2 class="section-heading">¿Cómo funciona el simulador?</h2>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-icon">🎱</div>
+            <h3>Posiciona la bola blanca</h3>
+            <p>Arrastra la <strong>Esfera 1</strong> al lugar de inicio en el plano cartesiano.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-icon">🏹</div>
+            <h3>Ajusta dirección y fuerza</h3>
+            <p>Arrastra la punta de la <strong>flecha azul</strong> para establecer dirección y velocidad.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-icon">🕳️</div>
+            <h3>Apunta a la tronera</h3>
+            <p>Haz que la <strong>Esfera 2</strong> caiga en la tronera circular verde. ¡Requiere precisión!</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-icon">⏱️</div>
+            <h3>5 segundos y nuevo desafío</h3>
+            <p>Tienes <strong>5 s</strong>. Al encestar, la tronera se mueve a una nueva posición aleatoria.</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<script src="script.js"></script>
+    <section class="section section-tinted">
+      <div class="container">
+        <div class="section-eyebrow">Fundamentos teóricos</div>
+        <h2 class="section-heading">Tipos de colisiones</h2>
+        <div class="theory-grid">
+
+          <div class="theory-card blue-top">
+            <div class="theory-header">
+              <span class="theory-badge elastic-badge">e = 1</span>
+              <h3>Colisión Elástica</h3>
+            </div>
+            <p>Conserva el <strong>momento lineal</strong> y la <strong>energía cinética</strong>. Sin pérdida.</p>
+            <div class="formulas">
+              <div class="formula-row">
+                <code>m₁v₁ᵢ + m₂v₂ᵢ = m₁v₁f + m₂v₂f</code>
+                <span class="formula-note">Conservación de momento</span>
+              </div>
+              <div class="formula-row">
+                <code>½m₁v₁ᵢ² + ½m₂v₂ᵢ² = ½m₁v₁f² + ½m₂v₂f²</code>
+                <span class="formula-note">Conservación de E. cinética</span>
+              </div>
+            </div>
+            <ul class="theory-bullets">
+              <li>Coeficiente de restitución <strong>e = 1</strong></li>
+              <li>Sin deformación permanente</li>
+              <li>Ejemplo: bolas de billar ideales</li>
+            </ul>
+          </div>
+
+          <div class="theory-card teal-top">
+            <div class="theory-header">
+              <span class="theory-badge inelastic-badge">0 ≤ e &lt; 1</span>
+              <h3>Colisión Inelástica</h3>
+            </div>
+            <p>Solo conserva el <strong>momento lineal</strong>. La energía cinética se convierte en calor.</p>
+            <div class="formulas">
+              <div class="formula-row">
+                <code>m₁v₁ᵢ + m₂v₂ᵢ = (m₁+m₂)vf</code>
+                <span class="formula-note">Colisión perfectamente inelástica</span>
+              </div>
+              <div class="formula-row">
+                <code>e = |v₂f − v₁f| / |v₁ᵢ − v₂ᵢ|</code>
+                <span class="formula-note">Coeficiente de restitución</span>
+              </div>
+            </div>
+            <ul class="theory-bullets">
+              <li>Coeficiente de restitución <strong>0 ≤ e &lt; 1</strong></li>
+              <li>Pérdida de energía cinética</li>
+              <li>Ejemplo: choque de automóviles</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <div class="vector-panel">
+          <h3>Descomposición Vectorial en 2D</h3>
+          <p>Toda velocidad en el plano se descompone en sus componentes ortogonales:</p>
+          <div class="vec-decomp">
+            <div class="vec-item">
+              <div class="vec-label">Componente X</div>
+              <code class="vec-formula">vₓ = v · cos(θ)</code>
+            </div>
+            <div class="vec-plus">+</div>
+            <div class="vec-item">
+              <div class="vec-label">Componente Y</div>
+              <code class="vec-formula">vᵧ = v · sin(θ)</code>
+            </div>
+            <div class="vec-plus">=</div>
+            <div class="vec-item">
+              <div class="vec-label">Velocidad resultante</div>
+              <code class="vec-formula">v = √(vₓ² + vᵧ²)</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>BillarFísica · Dilan Gerardo Hernandez Aguilar · UMG Chinautla · Física 1 · 2026</p>
+    </footer>
+
+  </div><!-- /page-home -->
+
+
+  <!-- ══════════════════════════════════════
+       PÁGINA: SIMULADOR
+  ══════════════════════════════════════ -->
+  <div id="page-simulator" class="page">
+    <div class="sim-shell">
+
+      <!-- ══ PANEL IZQUIERDO ══ -->
+      <aside class="left-panel">
+
+        <div class="panel-header">
+          <span class="panel-icon">🎱</span>
+          <span class="panel-title-text">BillarFísica</span>
+          <!-- Puntuación -->
+          <div class="score-wrap">
+            <span class="score-label">Pts</span>
+            <span class="score-val" id="score-display">0</span>
+          </div>
+        </div>
+
+        <!-- Temporizador -->
+        <div class="timer-block">
+          <div class="timer-label">Tiempo restante</div>
+          <div class="timer-display" id="timer-display">5.0s</div>
+          <div class="timer-bar-wrap"><div class="timer-bar" id="timer-bar"></div></div>
+        </div>
+
+        <!-- Instrucción rápida -->
+        <div class="hint-box">
+          <span class="hint-icon">💡</span>
+          <div>
+            <strong>Bola Blanca:</strong> arrastra la Esfera 1 y su flecha de dirección.<br/>
+            <strong>Objetivo:</strong> envía la Esfera 2 a la tronera circular verde.<br/>
+            Al encestar, ¡la tronera cambia de lugar!
+          </div>
+        </div>
+
+        <!-- Tipo de colisión -->
+        <div class="ctrl-block">
+          <div class="ctrl-block-label">Tipo de Colisión</div>
+          <div class="toggle-row">
+            <label class="toggle-opt">
+              <input type="radio" name="ctype" value="elastic" id="type-elastic" checked/>
+              <span class="toggle-face elastic-face">Elástica</span>
+            </label>
+            <label class="toggle-opt">
+              <input type="radio" name="ctype" value="inelastic" id="type-inelastic"/>
+              <span class="toggle-face inelastic-face">Inelástica</span>
+            </label>
+          </div>
+          <div id="rest-row" class="rest-row" style="display:none">
+            <div class="mini-label">
+              Coef. restitución (e)
+              <span class="tip-wrap">
+                <span class="tip-icon">?</span>
+                <span class="tip-text">0 = perfectamente inelástica · 0.99 = casi elástica</span>
+              </span>
+            </div>
+            <div class="slider-row">
+              <input type="range" id="restitution" min="0" max="0.99" step="0.01" value="0.7"/>
+              <span class="slider-val" id="rest-val">0.70</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Esfera 1 — bola blanca -->
+        <div class="ctrl-block ball1-block">
+          <div class="ctrl-block-label">
+            <span class="ball-dot dot-cue"></span>Esfera 1 — Bola Blanca
+          </div>
+          <div class="field-row">
+            <span class="mini-label">Masa (kg)</span>
+            <div class="spin-wrap">
+              <button class="spin-btn" onclick="nudge('m1',-0.5)">−</button>
+              <input type="number" id="m1" value="2.0" min="0.5" max="20" step="0.5" class="spin-input"/>
+              <button class="spin-btn" onclick="nudge('m1',0.5)">+</button>
+            </div>
+          </div>
+          <div class="field-row">
+            <span class="mini-label">Velocidad (m/s)</span>
+            <div class="spin-wrap">
+              <button class="spin-btn" onclick="nudge('v1',-0.5)">−</button>
+              <input type="number" id="v1" value="6.0" min="0.5" max="20" step="0.5" class="spin-input"/>
+              <button class="spin-btn" onclick="nudge('v1',0.5)">+</button>
+            </div>
+          </div>
+          <div class="field-row">
+            <span class="mini-label">Ángulo (°) — 0°=der · 90°=arr</span>
+            <div class="slider-row">
+              <input type="range" id="a1" min="-180" max="180" step="1" value="0"/>
+              <span class="slider-val" id="a1-val">0°</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Esfera 2 — objetivo -->
+        <div class="ctrl-block ball2-block">
+          <div class="ctrl-block-label">
+            <span class="ball-dot dot-target"></span>Esfera 2 — Objetivo
+          </div>
+          <div class="ball2-info">🔒 Estática hasta la colisión</div>
+          <div class="field-row">
+            <span class="mini-label">Masa (kg)</span>
+            <div class="spin-wrap">
+              <button class="spin-btn" onclick="nudge('m2',-0.5)">−</button>
+              <input type="number" id="m2" value="2.0" min="0.5" max="20" step="0.5" class="spin-input"/>
+              <button class="spin-btn" onclick="nudge('m2',0.5)">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="ctrl-btns">
+          <button class="ctrl-btn btn-start" id="btn-start" onclick="simStart()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+            Lanzar
+          </button>
+          <button class="ctrl-btn btn-pause" id="btn-pause" onclick="simPause()" disabled>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            Pausar
+          </button>
+          <button class="ctrl-btn btn-reset" id="btn-reset" onclick="simReset()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            Reiniciar
+          </button>
+        </div>
+
+        <div class="panel-divider"></div>
+
+        <!-- Estadísticas -->
+        <div class="stats-section">
+          <div class="stats-section-label">Estadísticas en tiempo real</div>
+
+          <div class="stat-group stat-cue">
+            <div class="stat-group-title"><span class="ball-dot dot-cue"></span>Esfera 1</div>
+            <div class="stat-row"><span class="sl">v</span><span class="sv" id="d-v1">—</span></div>
+            <div class="stat-row"><span class="sl">Vx</span><span class="sv" id="d-vx1">—</span></div>
+            <div class="stat-row"><span class="sl">Vy</span><span class="sv" id="d-vy1">—</span></div>
+            <div class="stat-row"><span class="sl">p</span><span class="sv" id="d-p1">—</span></div>
+            <div class="stat-row"><span class="sl">KE</span><span class="sv" id="d-ke1">—</span></div>
+          </div>
+
+          <div class="stat-group stat-target">
+            <div class="stat-group-title"><span class="ball-dot dot-target"></span>Esfera 2</div>
+            <div class="stat-row"><span class="sl">v</span><span class="sv" id="d-v2">—</span></div>
+            <div class="stat-row"><span class="sl">Vx</span><span class="sv" id="d-vx2">—</span></div>
+            <div class="stat-row"><span class="sl">Vy</span><span class="sv" id="d-vy2">—</span></div>
+            <div class="stat-row"><span class="sl">p</span><span class="sv" id="d-p2">—</span></div>
+            <div class="stat-row"><span class="sl">KE</span><span class="sv" id="d-ke2">—</span></div>
+          </div>
+
+          <div class="stat-group stat-system">
+            <div class="stat-group-title">Sistema</div>
+            <div class="stat-row"><span class="sl">p total</span><span class="sv accent" id="d-ptot">—</span></div>
+            <div class="stat-row"><span class="sl">KE total</span><span class="sv accent" id="d-ketot">—</span></div>
+            <div class="stat-row"><span class="sl">Tipo</span><span class="sv" id="d-type">—</span></div>
+            <div class="stat-row"><span class="sl">ΔKE</span><span class="sv" id="d-dke">—</span></div>
+          </div>
+        </div>
+
+      </aside><!-- /left-panel -->
+
+      <!-- ══ ÁREA PRINCIPAL ══ -->
+      <main class="sim-main">
+
+        <div class="status-bar">
+          <div class="status-left">
+            <span class="status-dot idle" id="status-dot"></span>
+            <span id="status-text">Configura y lanza la bola blanca hacia la tronera 🕳️</span>
+          </div>
+          <div id="collision-badge" class="collision-badge hidden"></div>
+        </div>
+
+        <!-- Canvas -->
+        <div class="canvas-wrap" id="canvas-wrap">
+          <canvas id="sim-canvas"></canvas>
+          <div class="drag-hint" id="drag-hint">🖱 Arrastra la Esfera 1 y su flecha de dirección</div>
+          <!-- Overlay de resultado -->
+          <div class="result-overlay hidden" id="result-overlay">
+            <div class="result-box" id="result-box">
+              <div class="result-icon" id="result-icon"></div>
+              <div class="result-msg"  id="result-msg"></div>
+              <div class="result-score" id="result-score"></div>
+              <button class="result-btn" onclick="simReset()">Jugar de nuevo</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leyenda -->
+        <div class="canvas-legend">
+          <span><span class="leg-swatch cue-swatch"></span>Bola blanca (arrastrable)</span>
+          <span><span class="leg-swatch target-swatch"></span>Bola objetivo</span>
+          <span><span class="leg-swatch goal-swatch"></span>Tronera (objetivo circular)</span>
+          <span class="leg-sep">|</span>
+          <span class="leg-vx">── Vx</span>
+          <span class="leg-vy">── Vy</span>
+        </div>
+
+      </main>
+
+    </div><!-- /sim-shell -->
+  </div><!-- /page-simulator -->
+
+  <script src="script.js"></script>
 </body>
 </html>
